@@ -1,0 +1,7 @@
+# never commit machine state or secrets
+*.bak
+*.log
+.env
+**/settings.toml
+**/state.toml
+**/history

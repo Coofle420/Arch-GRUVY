@@ -1,0 +1,449 @@
+// ╔══════════════════════════════════════════════════════════════╗
+// ║  niri — gruvbox dark gaming rig                              ║
+// ║  RX 7800 XT · i7-12700KF · 2560x1440 @ 200 Hz                ║
+// ║  Docs: https://yalter.github.io/niri/Configuration:-Introduction
+// ╚══════════════════════════════════════════════════════════════╝
+
+// ─── Input ──────────────────────────────────────────────────────
+input {
+    keyboard {
+        xkb {
+            // layout "us"
+        }
+        repeat-delay 250
+        repeat-rate 40
+        numlock
+    }
+
+    mouse {
+        // Raw input for games: no pointer acceleration.
+        accel-profile "flat"
+        accel-speed 0.0
+    }
+
+    touchpad {
+        tap
+        natural-scroll
+    }
+
+    focus-follows-mouse max-scroll-amount="0%"
+    workspace-auto-back-and-forth
+}
+
+// ─── Outputs ────────────────────────────────────────────────────
+// Run `niri msg outputs` to list connected monitors and their modes.
+// niri defaults a monitor to its *preferred* mode, which is often 60 Hz,
+// so every monitor needs its own block with an explicit refresh rate.
+output "DP-2" {
+    mode "2560x1440@200.000"
+    scale 1
+    position x=0 y=0
+    variable-refresh-rate on-demand=true
+    focus-at-startup
+    backdrop-color "#1d2021"
+}
+
+// Samsung Odyssey G3 (32") — 144 Hz is its max over HDMI (use DisplayPort for 165 Hz).
+output "HDMI-A-1" {
+    mode "1920x1080@143.998"
+    scale 1
+    position x=2560 y=0
+    variable-refresh-rate on-demand=true
+    backdrop-color "#1d2021"
+}
+
+// ─── Layout ─────────────────────────────────────────────────────
+layout {
+    gaps 12
+    center-focused-column "never"
+    background-color "transparent"
+
+    preset-column-widths {
+        proportion 0.33333
+        proportion 0.5
+        proportion 0.66667
+        proportion 1.0
+    }
+    default-column-width { proportion 0.5; }
+
+    focus-ring {
+        off
+    }
+
+    border {
+        off
+        width 3
+        active-gradient from="#fe8019" to="#fabd2f" angle=45 relative-to="workspace-view"
+        inactive-color "#3c3836"
+        urgent-color "#fb4934"
+    }
+
+    shadow {
+        on
+        softness 30
+        spread 4
+        offset x=0 y=6
+        color "#0009"
+        inactive-color "#0006"
+    }
+
+    tab-indicator {
+        width 4
+        gap 6
+        length total-proportion=0.6
+        position "left"
+        gaps-between-tabs 4
+        corner-radius 4
+        active-color "#fabd2f"
+        inactive-color "#504945"
+    }
+
+    insert-hint {
+        color "#fe801980"
+    }
+
+    struts {
+    }
+}
+
+overview {
+    zoom 0.45
+    backdrop-color "#1d2021"
+    workspace-shadow {
+        softness 40
+        spread 10
+        offset x=0 y=10
+        color "#0008"
+    }
+}
+
+// ─── Startup ────────────────────────────────────────────────────
+// Noctalia = bar, launcher, notifications, wallpaper, lock screen, idle, clipboard, polkit.
+// xwayland-satellite (for Steam + most games) is started automatically by niri.
+spawn-at-startup "noctalia"
+
+environment {
+    // Native Wayland for Electron/Chromium/Qt/SDL apps.
+    ELECTRON_OZONE_PLATFORM_HINT "auto"
+    QT_QPA_PLATFORM "wayland;xcb"
+    SDL_VIDEODRIVER "wayland,x11"
+    MOZ_ENABLE_WAYLAND "1"
+    // Gaming: AMD/RADV
+    MANGOHUD_CONFIGFILE "/home/USER/.config/MangoHud/MangoHud.conf"
+}
+
+hotkey-overlay {
+    skip-at-startup
+}
+
+prefer-no-csd
+
+screenshot-path "~/Pictures/Screenshots/%Y-%m-%d_%H-%M-%S.png"
+
+// Snappy animations — fast enough not to get in the way at 200 Hz.
+animations {
+    slowdown 0.8
+
+    workspace-switch {
+        spring damping-ratio=1.0 stiffness=1000 epsilon=0.0001
+    }
+    window-open {
+        duration-ms 180
+        curve "ease-out-expo"
+    }
+    window-close {
+        duration-ms 150
+        curve "ease-out-quad"
+    }
+    horizontal-view-movement {
+        spring damping-ratio=1.0 stiffness=900 epsilon=0.0001
+    }
+    window-movement {
+        spring damping-ratio=1.0 stiffness=900 epsilon=0.0001
+    }
+    window-resize {
+        spring damping-ratio=1.0 stiffness=900 epsilon=0.0001
+    }
+}
+
+cursor {
+    xcursor-theme "capitaine-cursors-light"
+    xcursor-size 24
+    hide-when-typing
+    hide-after-inactive-ms 3000
+}
+
+// ─── Workspaces ─────────────────────────────────────────────────
+// 1-5 live on the main monitor (DP-2), 6-10 on the Samsung (HDMI-A-1).
+// Super+N focuses workspace N on whichever monitor owns it, so the keys also hop monitors.
+workspace "1" {
+    open-on-output "DP-2"
+}
+workspace "2" {
+    open-on-output "DP-2"
+}
+workspace "3" {
+    open-on-output "DP-2"
+}
+workspace "4" {
+    open-on-output "DP-2"
+}
+workspace "5" {
+    open-on-output "DP-2"
+}
+workspace "6" {
+    open-on-output "HDMI-A-1"
+}
+workspace "7" {
+    open-on-output "HDMI-A-1"
+}
+workspace "8" {
+    open-on-output "HDMI-A-1"
+}
+workspace "9" {
+    open-on-output "HDMI-A-1"
+}
+workspace "10" {
+    open-on-output "HDMI-A-1"
+}
+
+// ─── Layer rules ────────────────────────────────────────────────
+// Stationary Noctalia wallpaper, visible behind workspaces and in the overview.
+layer-rule {
+    match namespace="^noctalia-wallpaper"
+    place-within-backdrop true
+}
+
+// No blur anywhere: Noctalia requests blur on its own surfaces, so it must be turned off explicitly.
+layer-rule {
+    match namespace="^noctalia-"
+    background-effect {
+        blur false
+    }
+}
+layer-rule {
+    match namespace="^noctalia-notification"
+    block-out-from "screencast"
+}
+
+debug {
+    // Lets Noctalia notifications/launcher focus windows.
+    honor-xdg-activation-with-invalid-serial
+}
+
+// ─── Window rules ───────────────────────────────────────────────
+// Rounded corners everywhere.
+window-rule {
+    geometry-corner-radius 12
+    clip-to-geometry true
+}
+
+// No blur on any window, even if an app asks for it.
+window-rule {
+    background-effect {
+        blur false
+    }
+}
+
+// Noctalia settings window floats.
+window-rule {
+    match app-id="dev.noctalia.Noctalia"
+    open-floating true
+    default-column-width { fixed 1080; }
+    default-window-height { fixed 920; }
+}
+
+// Games: fullscreen, square corners, no border, VRR (if the monitor has FreeSync on).
+window-rule {
+    match app-id=r#"^steam_app_"#
+    match app-id="^gamescope$"
+    match app-id=r#"^(?i)(lutris|heroic).*game"#
+    open-fullscreen true
+    variable-refresh-rate true
+    geometry-corner-radius 0
+    clip-to-geometry false
+    border { off; }
+    shadow { off; }
+}
+
+// Steam: main window big, popups float.
+window-rule {
+    match app-id="^steam$" title="^Steam$"
+    default-column-width { proportion 0.66667; }
+}
+window-rule {
+    match app-id="^steam$" title=r#"^(Friends List|Steam Settings|Properties|.*- Chat)"#
+    open-floating true
+}
+window-rule {
+    match app-id="^steam$" title=r#"^notificationtoasts_\d+_desktop$"#
+    default-floating-position x=12 y=12 relative-to="bottom-right"
+    open-focused false
+}
+
+// Floating utility windows.
+window-rule {
+    match app-id=r#"^(pavucontrol|org\.pulseaudio\.pavucontrol|nm-connection-editor|blueman-manager|net\.davidotek\.pupgui2|com\.vysp3r\.ProtonPlus)$"#
+    match title=r#"^(Picture-in-Picture|Picture in picture)$"#
+    open-floating true
+}
+
+// Browsers open wide.
+window-rule {
+    match app-id=r#"^(helium|helium-browser|chromium)$"#
+    default-column-width { proportion 0.66667; }
+}
+
+// Hide password managers / private stuff from screen recordings.
+window-rule {
+    match app-id=r#"^org\.keepassxc\.KeePassXC$"#
+    match app-id=r#"^org\.gnome\.World\.Secrets$"#
+    block-out-from "screen-capture"
+}
+
+// ─── Binds ──────────────────────────────────────────────────────
+// Modern layout: Super+Shift moves what Super focuses; Super+Ctrl is for monitors.
+binds {
+    Mod+Shift+Slash { show-hotkey-overlay; }
+
+    // ── Apps
+    Mod+Return hotkey-overlay-title="Terminal" { spawn "kitty"; }
+    Mod+B      hotkey-overlay-title="Helium browser" { spawn "helium-browser"; }
+    Mod+E      hotkey-overlay-title="Files" { spawn "nautilus"; }
+    Mod+G      hotkey-overlay-title="Steam" { spawn "steam"; }
+
+    // ── Noctalia
+    Mod+Space  hotkey-overlay-title="Launcher" { spawn-sh "noctalia msg panel-toggle launcher"; }
+    Mod+D      hotkey-overlay-title=null { spawn-sh "noctalia msg panel-toggle launcher"; }
+    Mod+S      hotkey-overlay-title="Control center" { spawn-sh "noctalia msg panel-toggle control-center"; }
+    Mod+V      hotkey-overlay-title="Clipboard history" { spawn-sh "noctalia msg panel-toggle clipboard"; }
+    Mod+X      hotkey-overlay-title="Power menu" { spawn-sh "noctalia msg panel-toggle session"; }
+    Mod+Comma  hotkey-overlay-title="Noctalia settings" { spawn-sh "noctalia msg settings-toggle"; }
+    Mod+Shift+W hotkey-overlay-title="Wallpaper picker" { spawn-sh "noctalia msg panel-toggle wallpaper"; }
+    Super+Alt+L hotkey-overlay-title="Lock screen" { spawn-sh "noctalia msg session lock"; }
+    Alt+Tab    hotkey-overlay-title="Window switcher" { spawn-sh "noctalia msg window-switcher hold"; }
+    Super+Alt+S allow-when-locked=true hotkey-overlay-title=null { spawn-sh "pkill orca || exec orca"; }
+
+    // ── Media (Noctalia shows the OSD)
+    XF86AudioRaiseVolume allow-when-locked=true { spawn-sh "noctalia msg volume-up"; }
+    XF86AudioLowerVolume allow-when-locked=true { spawn-sh "noctalia msg volume-down"; }
+    XF86AudioMute        allow-when-locked=true { spawn-sh "noctalia msg volume-mute"; }
+    XF86AudioMicMute     allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"; }
+    XF86AudioPlay        allow-when-locked=true { spawn-sh "playerctl play-pause"; }
+    XF86AudioStop        allow-when-locked=true { spawn-sh "playerctl stop"; }
+    XF86AudioPrev        allow-when-locked=true { spawn-sh "playerctl previous"; }
+    XF86AudioNext        allow-when-locked=true { spawn-sh "playerctl next"; }
+
+    // ── Window size: Super+[ smaller, Super+] bigger
+    Mod+BracketLeft  { set-column-width "-10%"; }
+    Mod+BracketRight { set-column-width "+10%"; }
+    Mod+Shift+F      { maximize-column; }
+    Mod+R            { switch-preset-column-width; }
+    Mod+Minus        { set-column-width "-10%"; }
+    Mod+Equal        { set-column-width "+10%"; }
+    Mod+Shift+Minus  { set-window-height "-10%"; }
+    Mod+Shift+Equal  { set-window-height "+10%"; }
+    Mod+Ctrl+R       { reset-window-height; }
+    Mod+M            { maximize-window-to-edges; }
+    Mod+Ctrl+F       { expand-column-to-available-width; }
+
+    // ── Window state
+    Mod+Q repeat=false { close-window; }
+    Mod+F       { fullscreen-window; }
+    Mod+T       { toggle-window-floating; }
+    Mod+Shift+T { switch-focus-between-floating-and-tiling; }
+    Mod+W       { toggle-column-tabbed-display; }
+    Mod+C       { center-column; }
+    Mod+Ctrl+C  { center-visible-columns; }
+    Mod+Shift+BracketLeft  { consume-or-expel-window-left; }
+    Mod+Shift+BracketRight { consume-or-expel-window-right; }
+
+    // ── Overview
+    Mod+Tab repeat=false { toggle-overview; }
+    Mod+O   repeat=false { toggle-overview; }
+
+    // ── Focus (Super + arrows / hjkl)
+    Mod+Left  { focus-column-left; }
+    Mod+Down  { focus-window-or-workspace-down; }
+    Mod+Up    { focus-window-or-workspace-up; }
+    Mod+Right { focus-column-right; }
+    Mod+H     { focus-column-left; }
+    Mod+J     { focus-window-or-workspace-down; }
+    Mod+K     { focus-window-or-workspace-up; }
+    Mod+L     { focus-column-right; }
+    Mod+Home  { focus-column-first; }
+    Mod+End   { focus-column-last; }
+
+    // ── Move (Super+Shift + arrows / hjkl)
+    Mod+Shift+Left  { move-column-left; }
+    Mod+Shift+Down  { move-window-down-or-to-workspace-down; }
+    Mod+Shift+Up    { move-window-up-or-to-workspace-up; }
+    Mod+Shift+Right { move-column-right; }
+    Mod+Shift+H     { move-column-left; }
+    Mod+Shift+J     { move-window-down-or-to-workspace-down; }
+    Mod+Shift+K     { move-window-up-or-to-workspace-up; }
+    Mod+Shift+L     { move-column-right; }
+    Mod+Shift+Home  { move-column-to-first; }
+    Mod+Shift+End   { move-column-to-last; }
+
+    // ── Monitors (Super+Ctrl focus, Super+Ctrl+Shift move)
+    Mod+Ctrl+Left        { focus-monitor-left; }
+    Mod+Ctrl+Right       { focus-monitor-right; }
+    Mod+Ctrl+Up          { focus-monitor-up; }
+    Mod+Ctrl+Down        { focus-monitor-down; }
+    Mod+Ctrl+Shift+Left  { move-column-to-monitor-left; }
+    Mod+Ctrl+Shift+Right { move-column-to-monitor-right; }
+    Mod+Ctrl+Shift+Up    { move-column-to-monitor-up; }
+    Mod+Ctrl+Shift+Down  { move-column-to-monitor-down; }
+
+    // ── Workspaces (Super+N go, Super+Shift+N send; 1-5 = main monitor, 6-0 = Samsung)
+    Mod+1 { focus-workspace "1"; }
+    Mod+2 { focus-workspace "2"; }
+    Mod+3 { focus-workspace "3"; }
+    Mod+4 { focus-workspace "4"; }
+    Mod+5 { focus-workspace "5"; }
+    Mod+6 { focus-workspace "6"; }
+    Mod+7 { focus-workspace "7"; }
+    Mod+8 { focus-workspace "8"; }
+    Mod+9 { focus-workspace "9"; }
+    Mod+0 { focus-workspace "10"; }
+    Mod+Shift+1 { move-column-to-workspace "1"; }
+    Mod+Shift+2 { move-column-to-workspace "2"; }
+    Mod+Shift+3 { move-column-to-workspace "3"; }
+    Mod+Shift+4 { move-column-to-workspace "4"; }
+    Mod+Shift+5 { move-column-to-workspace "5"; }
+    Mod+Shift+6 { move-column-to-workspace "6"; }
+    Mod+Shift+7 { move-column-to-workspace "7"; }
+    Mod+Shift+8 { move-column-to-workspace "8"; }
+    Mod+Shift+9 { move-column-to-workspace "9"; }
+    Mod+Shift+0 { move-column-to-workspace "10"; }
+    Mod+Page_Down       { focus-workspace-down; }
+    Mod+Page_Up         { focus-workspace-up; }
+    Mod+Shift+Page_Down { move-column-to-workspace-down; }
+    Mod+Shift+Page_Up   { move-column-to-workspace-up; }
+    Mod+Ctrl+Page_Down  { move-workspace-down; }
+    Mod+Ctrl+Page_Up    { move-workspace-up; }
+
+    // ── Mouse
+    Mod+WheelScrollDown       cooldown-ms=150 { focus-workspace-down; }
+    Mod+WheelScrollUp         cooldown-ms=150 { focus-workspace-up; }
+    Mod+Shift+WheelScrollDown cooldown-ms=150 { move-column-to-workspace-down; }
+    Mod+Shift+WheelScrollUp   cooldown-ms=150 { move-column-to-workspace-up; }
+    Mod+WheelScrollRight      { focus-column-right; }
+    Mod+WheelScrollLeft       { focus-column-left; }
+    Mod+Ctrl+WheelScrollDown  { focus-column-right; }
+    Mod+Ctrl+WheelScrollUp    { focus-column-left; }
+
+    // ── Screenshots
+    Print       { screenshot; }
+    Mod+Shift+S { screenshot; }
+    Ctrl+Print  { screenshot-screen; }
+    Alt+Print   { screenshot-window; }
+
+    // ── Session
+    // Games that grab keys: Super+Escape toggles the shortcut inhibitor.
+    Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
+    Mod+Shift+E { quit; }
+    Ctrl+Alt+Delete { quit; }
+    Mod+Shift+P { power-off-monitors; }
+}

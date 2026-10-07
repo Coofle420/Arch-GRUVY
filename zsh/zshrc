@@ -1,0 +1,164 @@
+# ╭──────────────────────────────────────────────────────────────╮
+# │  zsh · gruvbox                                               │
+# ╰──────────────────────────────────────────────────────────────╯
+
+# ── History ────────────────────────────────────────────────────
+HISTFILE=~/.local/state/zsh/history
+HISTSIZE=50000
+SAVEHIST=50000
+[[ -d ${HISTFILE:h} ]] || mkdir -p ${HISTFILE:h}
+setopt share_history hist_ignore_all_dups hist_ignore_space hist_reduce_blanks \
+       hist_verify extended_history inc_append_history
+
+# ── Options ────────────────────────────────────────────────────
+setopt auto_cd auto_pushd pushd_ignore_dups pushd_silent \
+       extended_glob glob_dots interactive_comments no_beep \
+       complete_in_word always_to_end
+WORDCHARS=${WORDCHARS//[\/.-]}     # Ctrl+W / Alt+B stop at / . -
+
+# ── Completion ─────────────────────────────────────────────────
+fpath=(/usr/share/zsh/site-functions $fpath)
+autoload -Uz compinit
+zcd=~/.cache/zsh; [[ -d $zcd ]] || mkdir -p $zcd
+# Rebuild the completion cache at most once a day (fast startup).
+_stale=($zcd/zcompdump(N.mh+24))
+if (( ${#_stale} )) || [[ ! -f $zcd/zcompdump ]]; then
+  compinit -d $zcd/zcompdump
+else
+  compinit -C -d $zcd/zcompdump
+fi
+unset _stale
+zmodload zsh/complist
+zstyle ':completion:*' menu select
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+zstyle ':completion:*' group-name ''
+zstyle ':completion:*' squeeze-slashes true
+zstyle ':completion:*' use-cache on
+zstyle ':completion:*' cache-path $zcd/compcache
+zstyle ':completion:*:descriptions' format '%F{#fe8019}󰄾 %d%f'
+zstyle ':completion:*:messages'     format '%F{#83a598}%d%f'
+zstyle ':completion:*:warnings'     format '%F{#fb4934}no matches%f'
+zstyle ':completion:*:corrections'  format '%F{#fabd2f}%d (errors: %e)%f'
+zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=38;2;250;189;47'
+
+# ── Keys (emacs-style) ─────────────────────────────────────────
+bindkey -e
+bindkey '^[[1;5C' forward-word         # Ctrl+Right
+bindkey '^[[1;5D' backward-word        # Ctrl+Left
+bindkey '^[[H'    beginning-of-line    # Home
+bindkey '^[[F'    end-of-line          # End
+bindkey '^[[3~'   delete-char          # Delete
+bindkey '^[[3;5~' kill-word            # Ctrl+Delete
+bindkey '^H'      backward-kill-word   # Ctrl+Backspace
+bindkey '^[[Z'    reverse-menu-complete # Shift+Tab
+autoload -Uz edit-command-line; zle -N edit-command-line
+bindkey '^X^E' edit-command-line       # Ctrl+X Ctrl+E: edit command in $EDITOR
+
+# ── Plugins (Arch packages) ────────────────────────────────────
+_p=/usr/share/zsh/plugins
+[[ -r $_p/zsh-autosuggestions/zsh-autosuggestions.zsh ]] && {
+  ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#665c54'
+  ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+  ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=30
+  source $_p/zsh-autosuggestions/zsh-autosuggestions.zsh
+  bindkey '^ ' autosuggest-accept      # Ctrl+Space accepts the suggestion
+}
+
+# fzf: Ctrl+R history, Ctrl+T files, Alt+C cd — in gruvbox
+if (( $+commands[fzf] )); then
+  export FZF_DEFAULT_OPTS="--height=45% --layout=reverse --border=rounded --info=inline-right \
+    --prompt='❯ ' --pointer='▶' --marker='✓' --separator='─' --scrollbar='│' \
+    --color=bg+:#3c3836,bg:-1,fg:#ebdbb2,fg+:#fbf1c7,hl:#fe8019,hl+:#fabd2f \
+    --color=border:#504945,header:#83a598,info:#8ec07c,marker:#b8bb26 \
+    --color=pointer:#fe8019,prompt:#fe8019,spinner:#d3869b,separator:#3c3836,scrollbar:#504945"
+  export FZF_CTRL_T_OPTS="--preview 'bat --color=always --style=numbers --line-range=:200 {} 2>/dev/null || eza -T -L2 --icons --color=always {}'"
+  export FZF_ALT_C_OPTS="--preview 'eza -T -L2 --icons --color=always {}'"
+  source <(fzf --zsh)
+fi
+
+# zoxide: `cd` learns your folders — `cd proj` jumps to ~/code/my-project, `cdi` picks with fzf
+(( $+commands[zoxide] )) && eval "$(zoxide init zsh --cmd cd)"
+
+# Syntax highlighting (gruvbox) — must load after other widgets
+[[ -r $_p/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]] && {
+  source $_p/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+  ZSH_HIGHLIGHT_STYLES[command]='fg=#b8bb26'
+  ZSH_HIGHLIGHT_STYLES[builtin]='fg=#8ec07c'
+  ZSH_HIGHLIGHT_STYLES[alias]='fg=#b8bb26'
+  ZSH_HIGHLIGHT_STYLES[function]='fg=#8ec07c'
+  ZSH_HIGHLIGHT_STYLES[precommand]='fg=#b8bb26,italic'
+  ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=#fb4934'
+  ZSH_HIGHLIGHT_STYLES[reserved-word]='fg=#fe8019'
+  ZSH_HIGHLIGHT_STYLES[path]='fg=#ebdbb2,underline'
+  ZSH_HIGHLIGHT_STYLES[single-quoted-argument]='fg=#fabd2f'
+  ZSH_HIGHLIGHT_STYLES[double-quoted-argument]='fg=#fabd2f'
+  ZSH_HIGHLIGHT_STYLES[dollar-quoted-argument]='fg=#fabd2f'
+  ZSH_HIGHLIGHT_STYLES[single-hyphen-option]='fg=#83a598'
+  ZSH_HIGHLIGHT_STYLES[double-hyphen-option]='fg=#83a598'
+  ZSH_HIGHLIGHT_STYLES[globbing]='fg=#d3869b'
+  ZSH_HIGHLIGHT_STYLES[commandseparator]='fg=#fe8019'
+  ZSH_HIGHLIGHT_STYLES[redirection]='fg=#fe8019'
+  ZSH_HIGHLIGHT_STYLES[comment]='fg=#7c6f64,italic'
+}
+
+# Up/Down search history for what you've typed so far
+[[ -r $_p/zsh-history-substring-search/zsh-history-substring-search.zsh ]] && {
+  source $_p/zsh-history-substring-search/zsh-history-substring-search.zsh
+  HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=#504945,fg=#fabd2f,bold'
+  HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='bg=#cc241d,fg=#ebdbb2,bold'
+  bindkey '^[[A' history-substring-search-up
+  bindkey '^[[B' history-substring-search-down
+  bindkey '^[OA' history-substring-search-up
+  bindkey '^[OB' history-substring-search-down
+}
+unset _p
+
+# ── Aliases ────────────────────────────────────────────────────
+if (( $+commands[eza] )); then
+  alias ls='eza --icons --group-directories-first'
+  alias ll='eza -l --icons --git --group-directories-first --time-style=relative'
+  alias la='eza -la --icons --git --group-directories-first --time-style=relative'
+  alias lt='eza -T -L2 --icons --group-directories-first'
+fi
+(( $+commands[bat] )) && alias cat='bat --paging=never --style=plain'
+alias grep='grep --color=auto'
+alias diff='diff --color=auto'
+alias ip='ip -color=auto'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias mkdir='mkdir -pv'
+alias cp='cp -iv'
+alias mv='mv -iv'
+alias rm='rm -I'
+alias df='df -h'
+alias free='free -h'
+alias c='clear'
+alias ff='fastfetch'
+
+# Packages
+alias update='yay -Syu'
+alias install='yay -S'
+alias remove='yay -Rns'
+alias search='yay -Ss'
+alias orphans='pacman -Qdtq | yay -Rns -'
+alias mirrors='sudo cachyos-rate-mirrors'
+
+# niri / desktop
+alias nconf='$EDITOR ~/.config/niri/config.kdl'
+alias nvalid='niri validate'
+alias outputs='niri msg outputs'
+alias zconf='$EDITOR ~/.zshrc && source ~/.zshrc'
+
+# Gaming
+alias gpu='watch -n1 -t "cat /sys/class/drm/card*/device/gpu_busy_percent; sensors amdgpu-pci-* 2>/dev/null | grep -E \"edge|junction|mem|PPT\""'
+alias protons='ls ~/.steam/steam/compatibilitytools.d 2>/dev/null'
+
+# ── Prompt ─────────────────────────────────────────────────────
+(( $+commands[starship] )) && eval "$(starship init zsh)"
+
+# ── Greeting: fastfetch in top-level terminals only ────────────
+if [[ -o interactive && $SHLVL -le 2 && -z $NO_FETCH && $TERM != linux ]] && (( $+commands[fastfetch] )); then
+  fastfetch
+fi

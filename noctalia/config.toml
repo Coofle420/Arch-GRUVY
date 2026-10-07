@@ -1,0 +1,159 @@
+# Noctalia v5 — gruvbox gaming rig.
+# GUI changes land in ~/.local/state/noctalia/settings.toml (they win over this file).
+# Full reference: https://docs.noctalia.dev/noctalia/
+
+[shell]
+font_family          = "JetBrainsMono Nerd Font"
+corner_radius_scale  = 1.2
+polkit_agent         = true
+clipboard_enabled    = true
+niri_overview_type_to_launch_enabled = true
+
+[shell.panel]
+transparency_mode  = "solid"          # no blur in this setup, so solid reads cleanest
+launcher_placement = "floating"
+launcher_position  = "center"
+
+[shell.shadow]
+alpha = 0.5
+
+[shell.launcher]
+sort_by_usage = true
+pinned = ["helium", "steam", "kitty", "org.gnome.Nautilus"]
+
+[shell.window_switcher]
+style = "carousel"
+mru   = true
+
+[theme]
+mode    = "dark"
+source  = "builtin"
+builtin = "Gruvbox"
+
+[wallpaper]
+enabled   = true
+fill_mode = "crop"
+directory = "/home/USER/Pictures/Wallpapers"
+
+[wallpaper.default]
+path = "/home/USER/Pictures/Wallpapers/gruvbox.png"
+
+[backdrop]
+enabled = false                       # stationary wallpaper on niri's backdrop
+
+# ── Never sleep ───────────────────────────────────────────────────────────────
+# No auto-lock, no screen-off. Manual lock (Super+Alt+L) still works.
+[idle.behavior.lock]
+enabled = false
+[idle.behavior.screen-off]
+enabled = false
+
+[lockscreen]
+enabled = true
+
+[notification]
+layer = "overlay"
+
+# ── Bar: one floating row of capsules, centred ────────────────────────────────
+[bar.main]
+position           = "top"
+thickness          = 36
+background_opacity = 0.0
+shadow             = true
+border_width       = 0.0
+margin_edge        = 6
+margin_ends        = 8
+padding            = 8
+widget_spacing     = 6
+font_weight        = 600
+compositor_blur    = false
+
+capsule           = true
+capsule_thickness = 0.82
+capsule_fill      = "#1d2021"          # gruvbox hard bg
+capsule_opacity   = 0.95
+capsule_border    = "#3c3836"
+capsule_border_width = 1.0
+capsule_foreground = "#fe8019"          # one colour for every widget: gruvbox orange
+capsule_padding   = 8.0
+
+start  = []
+center = ["distro_menu", "workspaces", "group:tools", "clock", "audio_visualizer", "tray", "group:stats", "group:status"]
+end    = []
+
+[[bar.main.capsule_group]]
+id             = "tools"
+members        = ["launcher", "settings", "screenshot", "caffeine", "nightlight"]
+widget_spacing = 4
+
+[[bar.main.capsule_group]]
+id             = "stats"
+members        = ["cpu", "gpu", "gpu-temp", "ram"]
+widget_spacing = 8
+
+[[bar.main.capsule_group]]
+id             = "status"
+members        = ["notifications", "network", "bluetooth", "volume", "control-center", "session"]
+widget_spacing = 4
+
+# ── Widgets ───────────────────────────────────────────────────────────────────
+[widget.distro_menu]
+type    = "custom_button"
+glyph   = "grid-dots"
+tooltip = "Applications"
+scale   = 1.2
+
+[widget.distro_menu.actions]
+left  = "exec noctalia msg panel-toggle launcher"
+right = "exec noctalia msg panel-toggle control-center"
+
+[widget.clock]
+format      = "{:%a %d %b   %H:%M}"
+color       = "#fe8019"          # orange
+font_weight = 700
+
+[widget.tray]
+match_adjacent_spacing = false
+capsule                = false
+scale                  = 0.85
+
+[widget.network]
+show_label = false
+[widget.volume]
+show_label = false
+[widget.bluetooth]
+show_label = false
+
+[widget.audio_visualizer]
+width   = 60
+bands   = 18
+color_1 = "#fe8019"
+color_2 = "#fe8019"
+
+[widget.workspaces]
+style          = "regular"
+label_source   = "name"        # show 1-5 / 6-10 by name; niri's spare empty workspace stays blank
+focused_color  = "#fe8019"          # orange
+occupied_color = "#a89984"          # warm grey
+empty_color    = "#504945"
+urgent_color   = "#fb4934"
+
+[widget.cpu]
+type = "sysmon"
+stat = "cpu_usage"
+[widget.gpu]
+type = "sysmon"
+stat = "gpu_usage"
+[widget.gpu-temp]
+type = "sysmon"
+stat = "gpu_temp"
+[widget.ram]
+type = "sysmon"
+stat = "ram_pct"
+
+# ── Dock ──────────────────────────────────────────────────────────────────────
+[dock]
+enabled            = true
+background_opacity = 0.0
+item_spacing       = 3
+pinned = ["helium", "kitty", "org.gnome.Nautilus", "steam"]

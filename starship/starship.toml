@@ -1,0 +1,122 @@
+# ╭─ gruvbox · two-line framed prompt with right-aligned status
+"$schema" = "https://starship.rs/config-schema.json"
+add_newline = true
+command_timeout = 800
+
+format = """
+[╭─](fg:#504945)\
+[](fg:#d65d0e)$os$username[](fg:#d65d0e bg:#3c3836)\
+$directory[](fg:#3c3836)\
+$git_branch$git_status$git_state\
+$python$nodejs$rust$golang$c\
+$fill\
+$status$cmd_duration$jobs$time
+[╰─](fg:#504945)$character"""
+
+[fill]
+symbol = "·"
+style = "fg:#3c3836"
+
+[os]
+disabled = false
+style = "bg:#d65d0e fg:#1d2021"
+format = "[$symbol]($style)"
+[os.symbols]
+Arch = "󰣇 "
+CachyOS = "󰣇 "
+Linux = " "
+
+[username]
+show_always = true
+style_user = "bg:#d65d0e fg:#1d2021 bold"
+style_root = "bg:#cc241d fg:#ebdbb2 bold"
+format = "[$user]($style)"
+
+[directory]
+style = "bg:#3c3836 fg:#fabd2f bold"
+read_only = " 󰌾"
+read_only_style = "bg:#3c3836 fg:#fb4934"
+format = "[  $path]($style)[$read_only]($read_only_style)"
+truncation_length = 4
+truncation_symbol = "…/"
+home_symbol = "~"
+[directory.substitutions]
+"Downloads" = "󰇚 "
+"Documents" = "󰈙 "
+"Pictures" = " "
+"Games" = "󰊴 "
+".config" = " "
+
+[git_branch]
+symbol = ""
+style = "fg:#8ec07c bold"
+format = " [$symbol $branch]($style)"
+
+[git_status]
+style = "fg:#fe8019"
+format = "[( $all_status$ahead_behind)]($style)"
+conflicted = "="
+ahead = "⇡${count}"
+behind = "⇣${count}"
+diverged = "⇕⇡${ahead_count}⇣${behind_count}"
+untracked = "?${count}"
+stashed = "≡"
+modified = "!${count}"
+staged = "+${count}"
+deleted = "✘${count}"
+
+[git_state]
+style = "fg:#fb4934 bold"
+format = " [$state( $progress_current/$progress_total)]($style)"
+
+[python]
+symbol = " "
+style = "fg:#83a598"
+format = " [$symbol$version]($style)"
+
+[nodejs]
+symbol = " "
+style = "fg:#b8bb26"
+format = " [$symbol$version]($style)"
+
+[rust]
+symbol = " "
+style = "fg:#fe8019"
+format = " [$symbol$version]($style)"
+
+[golang]
+symbol = " "
+style = "fg:#83a598"
+format = " [$symbol$version]($style)"
+
+[c]
+symbol = " "
+style = "fg:#83a598"
+format = " [$symbol$version]($style)"
+
+[status]
+disabled = false
+symbol = "✘ "
+style = "fg:#fb4934 bold"
+format = "[$symbol$status]($style) "
+
+[cmd_duration]
+min_time = 2000
+style = "fg:#fabd2f"
+format = "[󱎫 $duration]($style) "
+
+[jobs]
+symbol = " "
+style = "fg:#d3869b"
+format = "[$symbol$number]($style) "
+
+[time]
+disabled = false
+time_format = "%H:%M"
+style = "fg:#7c6f64"
+format = "[ $time]($style)"
+
+[character]
+success_symbol = "[❯](bold fg:#b8bb26)"
+error_symbol = "[❯](bold fg:#fb4934)"
+vimcmd_symbol = "[❮](bold fg:#83a598)"

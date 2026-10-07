@@ -1,0 +1,6 @@
+export PATH="$HOME/.local/bin:$PATH"
+export EDITOR="${EDITOR:-nano}"
+export PAGER="less"
+export LESS="-R --mouse"
+export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+export MANROFFOPT="-c"

@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2560" height="1440" viewBox="0 0 2560 1440">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1d2021"/>
+      <stop offset="0.45" stop-color="#3c3836"/>
+      <stop offset="0.72" stop-color="#af3a03"/>
+      <stop offset="0.85" stop-color="#d65d0e"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#fabd2f"/>
+      <stop offset="0.7" stop-color="#fe8019"/>
+      <stop offset="1" stop-color="#fe8019" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#fe8019" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#fe8019" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="2560" height="1440" fill="url(#sky)"/>
+  <g fill="#ebdbb2" opacity="0.55">
+    <circle cx="210" cy="140" r="2"/><circle cx="480" cy="260" r="1.5"/><circle cx="760" cy="90" r="2.2"/>
+    <circle cx="1020" cy="210" r="1.4"/><circle cx="1380" cy="70" r="1.8"/><circle cx="1650" cy="180" r="2"/>
+    <circle cx="1920" cy="110" r="1.5"/><circle cx="2210" cy="230" r="2.2"/><circle cx="2440" cy="80" r="1.6"/>
+    <circle cx="340" cy="380" r="1.2"/><circle cx="1180" cy="330" r="1.3"/><circle cx="2060" cy="360" r="1.2"/>
+    <circle cx="620" cy="420" r="1"/><circle cx="1540" cy="400" r="1.1"/><circle cx="2330" cy="440" r="1"/>
+  </g>
+  <circle cx="1280" cy="900" r="700" fill="url(#glow)"/>
+  <circle cx="1280" cy="880" r="230" fill="url(#sun)"/>
+  <g fill="#d65d0e" opacity="0.35">
+    <rect x="1050" y="900" width="460" height="10"/><rect x="1050" y="935" width="460" height="14"/>
+    <rect x="1050" y="975" width="460" height="18"/>
+  </g>
+  <path d="M0 980 L260 760 L470 900 L720 690 L960 880 L1180 740 L1420 920 L1660 700 L1900 870 L2140 720 L2380 860 L2560 780 L2560 1440 L0 1440 Z" fill="#504945"/>
+  <path d="M0 1080 L180 930 L400 1040 L640 880 L900 1050 L1120 930 L1360 1070 L1600 900 L1840 1040 L2080 920 L2320 1060 L2560 950 L2560 1440 L0 1440 Z" fill="#3c3836"/>
+  <path d="M0 1200 L240 1080 L520 1180 L780 1060 L1060 1190 L1340 1090 L1600 1200 L1880 1080 L2160 1190 L2400 1100 L2560 1160 L2560 1440 L0 1440 Z" fill="#282828"/>
+  <path d="M0 1320 L300 1240 L640 1310 L980 1230 L1300 1320 L1640 1250 L1980 1320 L2300 1250 L2560 1300 L2560 1440 L0 1440 Z" fill="#1d2021"/>
+</svg>
